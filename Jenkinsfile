@@ -1,7 +1,7 @@
 pipeline{
 	agent any
 	environment{
-		IMAGE = "doppy6/BNSP"
+		IMAGE = "doppy6/bnsp"
 		TAG = "latest"
 
 	}
@@ -54,7 +54,7 @@ pipeline{
 				script{
 					echo "Pulling Docker Image..."
 					sh """
-					docker pull doppy6/BNSP
+					docker pull ${IMAGE}:${TAG}
 					"""
 				}
 			}
