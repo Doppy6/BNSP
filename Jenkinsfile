@@ -50,7 +50,6 @@ pipeline{
 					remote.user=env.BNSP_CREDS_USR
 					remote.password=env.BNSP_CREDS_PSW
 				}
-				sshCommand(remote: remote, command: "docker pull ${IMAGE}:${TAG}")
 			}
 		}
 
@@ -58,7 +57,7 @@ pipeline{
 			steps{
 				script{
 					echo "Pulling Docker Image..."
-				
+					sshCommand(remote: remote, command: "docker pull ${IMAGE}:${TAG}")
 					
 				}
 			}
