@@ -1,9 +1,14 @@
+def remote=[:]
+remote.name = 'bnsp9'
+remote.host = '157.10.160.114'
+remote.allowAnyHosts = true
+
 pipeline{
 	agent any
 	environment{
 		IMAGE = "doppy6/bnsp"
 		TAG = "latest"
-
+		BNSP_CREDS=credentials('ssh-vps')
 	}
 	stages {
 		stage('Checkout Source') {
@@ -41,11 +46,11 @@ pipeline{
 		stage('Connecting to VPS') {
 			steps{
 				script{
-					echo "Connecting to VPS..."
-					sh """
-					ssh bnsp9@157.10.160.114
-					"""
+					echo "Setting Up SSH connection to VPS..."
+					remote.user=env.BNSP_CREDS_USR
+					remote.password=env.BNSP_CREDS_PSW
 				}
+				sshCommand(remote: remote, command: "docker pull ${IMAGE}:${TAG}")
 			}
 		}
 
@@ -53,21 +58,20 @@ pipeline{
 			steps{
 				script{
 					echo "Pulling Docker Image..."
-					sh """
-					docker pull ${IMAGE}:${TAG}
-					"""
+				
+					
 				}
 			}
 		}
 
-		 stage('Building Docker Container'){
+		 stage('Running Docker Container'){
                         steps{
                                 script{
-                                        echo "Building Docker Image..."
-                                        sh """
-					docker rm -f porto
-                                        docker run -d -p 80:80 --name porto doppy6/BNSP
-                                        """
+                                        echo "Running Docker Image..."
+                                        
+				                    	sshCommand(remote: remote, command: "docker rm -f porto")
+                                        sshCommand(remote: remote, command: "docker run -d -p 9200:80 --name porto ${IMAGE}", )
+                                        
                                 }
                         }
                 }
@@ -76,9 +80,9 @@ pipeline{
                         steps{
                                 script{
                                         echo "Exiting VPS..."
-                                        sh """
-                                        exit
-                                        """
+                                        
+                                        
+                                        
                                 }
                         }
                 }
