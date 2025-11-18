@@ -13,7 +13,7 @@ pipeline{
 	stages {
 		stage('Checkout Source') {
 			steps {
-				git branch: 'main', url: 'https://github.com/Doppy6/BNSP.git'
+				git branch: 'main', url: 'https://github.com/doppy6/BNSP.git'
 			}
 		}
 
